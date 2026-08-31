@@ -30,4 +30,4 @@ A running record of meaningful AI sessions: what I asked, what the AI produced, 
 
 **What I kept / changed:**
 
-
+Asked Claude to critique my Case 1 brief draft; it flagged two gaps (idle beds, tipping-point reasoning) which I added myself.
