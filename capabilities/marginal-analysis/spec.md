@@ -53,3 +53,20 @@ FERTILIZER_COST(crop, q) = q × FERTILIZER_PER_BED(crop)
 REVENUE(crop, q) = q × REVENUE_PER_BED(crop)
 
 PROFIT = sum of REVENUE across all crops − sum of FERTILIZER_COST across all crops − TOTAL_LABOR_COST − FIXED_COSTS
+
+## 4. Validation Rules
+
+- q=1 hand check: 1 bed of tomatoes should require 1 × 2.5 × 36 × 1.10 = 99 hours exactly
+- Cross-check: at least one intermediate marginal-cost value compared against the Farm Profit Lab
+- Solver run from two starting points (0/0/0 and 20/0/0) — results should agree; if not, that is itself a finding
+- No error cells (#REF!, #DIV/0!, #NAME?) anywhere in the workbook
+- Every calculated cell contains a formula, not a pasted/typed number
+- All constraint-check cells (bed caps, 64-bed total, temp worker cap) show green/passing
+- Check figures match: optimal mix = 10 tomato / 20 carrot / 30 mesclun beds, profit = $42,762
+
+  ## 5. Outputs
+
+- Optimal bed counts for tomatoes, carrots, and mesclun
+- Total season profit
+- Marginal cost schedule for each crop (cost of the 1st through last bed)
+- The bed count where each crop's marginal cost crosses its price, run standalone (not constrained by the 64-bed total)
