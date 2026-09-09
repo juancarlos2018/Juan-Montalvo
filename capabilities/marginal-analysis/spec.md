@@ -46,7 +46,8 @@ TOTAL_LABOR_HRS = sum of LABOR_HRS across all three crops at chosen bed counts
 Labor cost:
 - OWNER_HRS (720) are consumed first, at OWNER_RATE ($34.72/hr)
 - Any remaining hours beyond OWNER_HRS are covered by temp workers at TEMP_RATE ($17.36/hr), up to TEMP_WORKER_CAP × TEMP_HRS_EACH (4 × 1,440 = 5,760 hrs max)
-- BLENDED_LABOR_RATE = TOTAL_LABOR_COST / TOTAL_LABOR_HRS (a single farm-level rate, not per-crop)
+- BLENDED_LABOR_RATE = TOTAL_LABOR_COST / TOTAL_LABOR_HRS (one rate for the whole farm)
+   APPLICABLE_LABOR_RATE = BLENDED_LABOR_RATE for every crop — the owner/temp split is a farm-wide fact, not calculated separately per crop.
 
 FERTILIZER_COST(crop, q) = q × FERTILIZER_PER_BED(crop)
 
