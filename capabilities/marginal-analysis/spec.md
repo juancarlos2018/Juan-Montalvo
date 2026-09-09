@@ -36,3 +36,20 @@
 | Marginal Cost Schedules | For each crop, cost of the 1st through last bed — this is what gets compared against the flat revenue-per-bed price |
 | Optimization | The three decision cells (beds of tomatoes/carrots/mesclun), the constraints, and the Solver setup |
 | Checks | The validation rules from Section 4 — formulas confirming no error cells, the q=1 hand-check, and whether the check figures match |
+
+## 3. Calculation Logic
+
+LABOR_HRS(crop, q) = q × HRS_PER_BED(crop) × SEASON_WEEKS × (1 + DIM_PCT(crop))^q
+
+TOTAL_LABOR_HRS = sum of LABOR_HRS across all three crops at chosen bed counts
+
+Labor cost:
+- OWNER_HRS (720) are consumed first, at OWNER_RATE ($34.72/hr)
+- Any remaining hours beyond OWNER_HRS are covered by temp workers at TEMP_RATE ($17.36/hr), up to TEMP_WORKER_CAP × TEMP_HRS_EACH (4 × 1,440 = 5,760 hrs max)
+- BLENDED_LABOR_RATE = TOTAL_LABOR_COST / TOTAL_LABOR_HRS (a single farm-level rate, not per-crop)
+
+FERTILIZER_COST(crop, q) = q × FERTILIZER_PER_BED(crop)
+
+REVENUE(crop, q) = q × REVENUE_PER_BED(crop)
+
+PROFIT = sum of REVENUE across all crops − sum of FERTILIZER_COST across all crops − TOTAL_LABOR_COST − FIXED_COSTS
