@@ -11,7 +11,7 @@
 | TOMATO_DIM | 10% | — | case givens |
 | CARROT_BED_CAP | 20 | beds | case givens |
 | CARROT_REVENUE | 2,094 | $/bed | case givens |
-| CARROT_HRS | 0.833 | hrs/wk/bed | case givens |
+| CARROT_HRS | 0.8333 (=2.5/3) | hrs/wk/bed | case givens, corrected from rounded 0.833 during audit |
 | CARROT_DIM | 2.5% | — | case givens |
 | MESCLUN_BED_CAP | 30 | beds | case givens |
 | MESCLUN_REVENUE | 2,700 | $/bed | case givens |
@@ -21,10 +21,10 @@
 | SEASON_WEEKS | 36 | weeks | case givens |
 | FIXED_COSTS | 20,000 | $ | case givens |
 | OWNER_HRS | 720 | hrs | case givens |
-| OWNER_RATE | 34.72 | $/hr | case givens |
+| OWNER_RATE | 34.7222 (=50,000/1,440) | $/hr | case givens, corrected from rounded 34.72 during audit |
 | TEMP_WORKER_CAP | 4 | workers | case givens |
 | TEMP_HRS_EACH | 1,440 | hrs | case givens |
-| TEMP_RATE | 17.36 | $/hr | case givens |
+| TEMP_RATE | 17.3611 (=25,000/1,440) | $/hr | case givens, corrected from rounded 17.36 during audit |
 
 
 ## 2. Structure
@@ -65,9 +65,19 @@ PROFIT = sum of REVENUE across all crops − sum of FERTILIZER_COST across all c
 - All constraint-check cells (bed caps, 64-bed total, temp worker cap) show green/passing
 - Check figures match: optimal mix = 10 tomato / 20 carrot / 30 mesclun beds, profit = $42,762
 
-  ## 5. Outputs
+## 5. Outputs
 
 - Optimal bed counts for tomatoes, carrots, and mesclun
 - Total season profit
 - Marginal cost schedule for each crop (cost of the 1st through last bed)
 - The bed count where each crop's marginal cost crosses its price, run standalone (not constrained by the 64-bed total)
+
+## 6. Audit Findings
+
+I checked the built model against the check figures in Section 4 and found two bugs.
+
+**Bug 1 — Solver was using the wrong profit cell.** I noticed the profit target was showing 0, so I traced the formula back and found that the "Maximize PROFIT" cell was linked to an empty cell instead of the actual profit calculation.
+
+**Bug 2 — Three input values had been rounded instead of using their exact values.** I noticed the final profit was off by about $13.49 from the published check figure, so I checked the input numbers and found the rounded carrot labor hours, owner hourly rate, and temporary-worker hourly rate.
+
+**Fix and confirmation.** To fix both, I changed the Solver target to the correct profit cell and replaced the rounded inputs with the exact values (Section 1 now shows the corrected values). I then reran the calculations and confirmed the final profit matched the correct result of $42,761.66, and ran Solver from two different starting points (0/0/0 and 20/0/0) to check the answer — see the Checks tab for that result.
