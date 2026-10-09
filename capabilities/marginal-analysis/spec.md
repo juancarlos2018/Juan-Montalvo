@@ -44,8 +44,8 @@ LABOR_HRS(crop, q) = q × HRS_PER_BED(crop) × SEASON_WEEKS × (1 + DIM_PCT(crop
 TOTAL_LABOR_HRS = sum of LABOR_HRS across all three crops at chosen bed counts
 
 Labor cost:
-- OWNER_HRS (720) are consumed first, at OWNER_RATE ($34.72/hr)
-- Any remaining hours beyond OWNER_HRS are covered by temp workers at TEMP_RATE ($17.36/hr), up to TEMP_WORKER_CAP × TEMP_HRS_EACH (4 × 1,440 = 5,760 hrs max)
+- OWNER_HRS (720) are consumed first, at OWNER_RATE ($34.7222/hr, i.e. 50,000/1,440)
+- Any remaining hours beyond OWNER_HRS are covered by temp workers at TEMP_RATE ($17.3611/hr, i.e. 25,000/1,440), up to TEMP_WORKER_CAP × TEMP_HRS_EACH (4 × 1,440 = 5,760 hrs max)
 - BLENDED_LABOR_RATE = TOTAL_LABOR_COST / TOTAL_LABOR_HRS (one rate for the whole farm)
    APPLICABLE_LABOR_RATE = BLENDED_LABOR_RATE for every crop — the owner/temp split is a farm-wide fact, not calculated separately per crop.
 
@@ -57,13 +57,13 @@ PROFIT = sum of REVENUE across all crops − sum of FERTILIZER_COST across all c
 
 ## 4. Validation Rules
 
-- q=1 hand check: 1 bed of tomatoes should require 1 × 2.5 × 36 × 1.10 = 99 hours exactly
-- Cross-check: at least one intermediate marginal-cost value compared against the Farm Profit Lab
+- q=1 hand check: 1 bed of tomatoes should require 1 × 2.5 × 36 × 1.10 = 99 hours, within 0.01 hours (floating-point tolerance)
+- Cross-check: at least one intermediate marginal-cost value compared against the Farm Profit Lab, within $1
 - Solver run from two starting points (0/0/0 and 20/0/0) — results should agree; if not, that is itself a finding
 - No error cells (#REF!, #DIV/0!, #NAME?) anywhere in the workbook
 - Every calculated cell contains a formula, not a pasted/typed number
 - All constraint-check cells (bed caps, 64-bed total, temp worker cap) show green/passing
-- Check figures match: optimal mix = 10 tomato / 20 carrot / 30 mesclun beds, profit = $42,762
+- Check figures match: optimal mix = 10 tomato / 20 carrot / 30 mesclun beds (exact — bed counts are integers), profit within $1 of $42,761.66
 
 ## 5. Outputs
 
@@ -81,3 +81,5 @@ I checked the built model against the check figures in Section 4 and found two b
 **Bug 2 — Three input values had been rounded instead of using their exact values.** I noticed the final profit was off by about $13.49 from the published check figure, so I checked the input numbers and found the rounded carrot labor hours, owner hourly rate, and temporary-worker hourly rate.
 
 **Fix and confirmation.** To fix both, I changed the Solver target to the correct profit cell and replaced the rounded inputs with the exact values (Section 1 now shows the corrected values). I then reran the calculations and confirmed the final profit matched the correct result of $42,761.66, and ran Solver from two different starting points (0/0/0 and 20/0/0) to check the answer — see the Checks tab for that result.
+
+**Finding 3 — Solver gave different answers from different starting points.** I checked the Solver results using two different starting points to see whether the model would find the same solution. Starting at 0/0/0 gave me a profit of $42,761.66 with 10 tomato, 20 carrot, and 30 mesclun beds. Starting at 20/0/0 gave me a much lower profit of -$84,334.37 (recorded in Checks!B12). This showed that Solver was not consistently finding the best solution. Going forward, I will test Solver with different starting points and independently verify the profit and constraints before accepting the results. I will use the best feasible solution and document any differences so I can trust the model's final recommendation.
